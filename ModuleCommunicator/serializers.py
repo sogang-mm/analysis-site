@@ -1,6 +1,6 @@
 from django.forms import widgets
 from rest_framework import serializers
-from AnalysisModules.models import *
+from ModuleCommunicator.models import *
 
 
 class ModulesSerializer(serializers.HyperlinkedModelSerializer):

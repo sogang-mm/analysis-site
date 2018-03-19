@@ -4,8 +4,8 @@ from __future__ import unicode_literals
 from django.shortcuts import render
 
 # Create your views here.
-from AnalysisModules.models import *
-from AnalysisModules.serializers import *
+from ModuleCommunicator.models import *
+from ModuleCommunicator.serializers import *
 from rest_framework import viewsets, generics
 
 
