@@ -3,13 +3,6 @@ from rest_framework import serializers
 from ModuleCommunicator.models import *
 
 
-class ModulesSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = ModulesModel
-        fields = ('name', 'url', 'description', 'status')
-        # read_only_fields = ('name', 'url', 'description', 'status')
-
-
 class ImageSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ImageModel

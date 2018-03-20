@@ -5,14 +5,8 @@ from django.db import models
 
 # Create your models here.
 from ModuleCommunicator import tasks
+from ModuleManager.models import *
 import json
-
-
-class ModulesModel(models.Model):
-    name = models.TextField(unique=True)
-    url = models.URLField()
-    description = models.TextField(blank=True)
-    status = models.BooleanField(default=True)
 
 
 class ImageModel(models.Model):
@@ -25,18 +19,23 @@ class ImageModel(models.Model):
 
     def save(self, *args, **kwargs):
         super(ImageModel, self).save(*args, **kwargs)
-        module_list = self.modules.split(',')
+
+        try:
+            module_group = ModuleGroupModel.objects.get(name=self.modules)
+        except:
+            self.result = u"Module not found. Please check and send again."
+            super(ImageModel, self).save()
+            return
 
         result_model_list = []
-        for module_name in module_list:
-            result_model = self.resultmodel_set.create(module_name=module_name)
+        for modules in module_group.modules.all():
+            result_model = self.resultmodel_set.create(modules=modules)
             result_model_list.append(result_model)
 
         result_dict = dict()
-
         for result_model in result_model_list:
             result_model.get_result()
-            result_dict[str(result_model.module_name)] = str(result_model.result)
+            result_dict[str(result_model.modules.name)] = str(result_model.result)
 
         self.result = json.dumps(result_dict)
 
@@ -44,20 +43,17 @@ class ImageModel(models.Model):
 
 
 class ResultModel(models.Model):
-    module_name = models.TextField(null=True)
     result = models.TextField(null=True)
     image = models.ForeignKey(ImageModel)
+    modules = models.ForeignKey(ModuleModel)
 
     def save(self, *args, **kwargs):
         super(ResultModel, self).save(*args, **kwargs)
-
         # Celery Delay
         try:
-            url = ModulesModel.objects.get(name=self.module_name).url
-            self.task = tasks.post_image_and_get_result.delay(url=url, image_path=self.image.image.path)
+            self.task = tasks.post_image_and_get_result.delay(url=self.modules.url, image_path=self.image.image.path)
         except:
             self.task = None
-
         super(ResultModel, self).save()
 
     def get_result(self):
@@ -65,5 +61,5 @@ class ResultModel(models.Model):
         if self.task is not None:
             self.result = self.task.get()
         else:
-            self.result = u"Module not found. Please check and send again."
+            self.result = u"Module Error. Please contact the administrator"
 
