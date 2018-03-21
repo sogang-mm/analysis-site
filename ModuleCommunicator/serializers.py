@@ -10,8 +10,8 @@ class ImageSerializer(serializers.HyperlinkedModelSerializer):
         read_only_fields = ('token', 'uploaded_date', 'updated_date', 'result')
 
 
-class ResultSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = ResultModel
-        fields = ('module_name', 'result')
-        read_only_fields = ('module_name', 'result')
+# class ResultSerializer(serializers.HyperlinkedModelSerializer):
+#     class Meta:
+#         model = ResultModel
+#         fields = ('result')
+#         read_only_fields = ('result')

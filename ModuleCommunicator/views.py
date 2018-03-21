@@ -13,6 +13,6 @@ class ImageViewSet(viewsets.ModelViewSet):
     serializer_class = ImageSerializer
 
 
-class ResultViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = ResultModel.objects.all()
-    serializer_class = ResultSerializer
+# class ResultViewSet(viewsets.ReadOnlyModelViewSet):
+#     queryset = ResultModel.objects.all()
+#     serializer_class = ResultSerializer

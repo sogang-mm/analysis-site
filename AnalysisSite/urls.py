@@ -20,9 +20,27 @@ from django.conf import settings
 from django.conf.urls import include
 from django.conf.urls.static import static
 
+from rest_framework.routers import DefaultRouter
+import ModuleCommunicator.views
+import ModuleManager.views
+
+
+router = DefaultRouter()
+
+router.register(r'analyzer', ModuleCommunicator.views.ImageViewSet)
+router.register(r'modules/group', ModuleManager.views.ModulesGroupViewSet)
+router.register(r'modules/detail', ModuleManager.views.ModulesViewSet)
+
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^', include('ModuleCommunicator.urls')),
-    url(r'^modules/', include('ModuleManager.urls')),
+    url(r'^', include(router.urls)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+# urlpatterns = [
+#     url(r'^admin/', admin.site.urls),
+#     url(r'^', include('ModuleCommunicator.urls')),
+#     url(r'^modules/', include('ModuleManager.urls')),
+# ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
