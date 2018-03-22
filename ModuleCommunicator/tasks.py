@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from AnalysisSite.celerys import app
 import json
 import requests

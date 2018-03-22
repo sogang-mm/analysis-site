@@ -44,7 +44,7 @@ class ImageModel(models.Model):
 
 class ResultModel(models.Model):
     result = models.TextField(null=True)
-    image = models.ForeignKey(ImageModel)
+    image = models.ForeignKey(ImageModel, on_delete=models.CASCADE)
     modules = models.ForeignKey(ModuleModel)
 
     def save(self, *args, **kwargs):
@@ -62,4 +62,3 @@ class ResultModel(models.Model):
             self.result = self.task.get()
         else:
             self.result = u"Module Error. Please contact the administrator"
-

@@ -1,8 +1,7 @@
-# TODO
-#   - If you need more modules at one machine, than edit this part
-#   - If you want to know total number of gpu, than use GPUtil and GPUtil.getGPUs()
-
-
 WORKER_MIN_SCALER = 20
 WORKER_MAX_SCALER = 50
 WORKER_CONCURRENCY = (WORKER_MIN_SCALER + WORKER_MAX_SCALER) // 2
+
+DATABASE_AUTO_DELETE_HOUR = 4
+DATABASE_AUTO_DELETE_MINUTE = 00
+DATABASE_AUTO_DELETE_BEFORE_DAYS = 7
