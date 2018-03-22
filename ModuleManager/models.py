@@ -13,6 +13,9 @@ class ModuleModel(models.Model):
     description = models.TextField(blank=True)
     status = models.BooleanField(default=True)
 
+    def __str__(self):
+        return self.name
+
     def save(self, *args, **kwargs):
         super(ModuleModel, self).save(*args, **kwargs)
         self.modulegroupmodel_set.create(name=self.name, modules_list=self.name, description=self.description)

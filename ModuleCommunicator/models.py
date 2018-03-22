@@ -19,18 +19,20 @@ class ImageModel(models.Model):
 
     def save(self, *args, **kwargs):
         super(ImageModel, self).save(*args, **kwargs)
-
-        try:
-            module_group = ModuleGroupModel.objects.get(name=self.modules)
-        except:
-            self.result = u"Module not found. Please check and send again."
-            super(ImageModel, self).save()
-            return
+        module_group_list = self.modules.split(',')
 
         result_model_list = []
-        for modules in module_group.modules.all():
-            result_model = self.resultmodel_set.create(modules=modules)
-            result_model_list.append(result_model)
+        for module_group_name in module_group_list:
+            try:
+                module_group = ModuleGroupModel.objects.get(name=module_group_name.strip())
+            except:
+                self.result = u"Module not found. Please check and send again."
+                super(ImageModel, self).save()
+                return
+
+            for modules in module_group.modules.all():
+                result_model = self.resultmodel_set.create(modules=modules)
+                result_model_list.append(result_model)
 
         result_dict = dict()
         for result_model in result_model_list:
