@@ -5,6 +5,7 @@ from django.db import models
 
 # Create your models here.
 from rest_framework import exceptions
+import requests
 
 
 class ModuleModel(models.Model):
@@ -18,6 +19,9 @@ class ModuleModel(models.Model):
 
     def save(self, *args, **kwargs):
         super(ModuleModel, self).save(*args, **kwargs)
+        response = requests.get(self.url)
+        if response.ok is False:
+            raise exceptions.ValidationError('Cannot access URL. Check module URL.')
         self.modulegroupmodel_set.create(name=self.name, modules_list=self.name, description=self.description)
         super(ModuleModel, self).save()
 
