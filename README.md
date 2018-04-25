@@ -53,6 +53,7 @@ vi secret_key.py
 ```python
 SECRET_KEY = ""
 ```
+https://djskgen.herokuapp.com/에서 생성할 수 있다.
 
 
 ## 실행하기
