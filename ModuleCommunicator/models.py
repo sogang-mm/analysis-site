@@ -17,7 +17,6 @@ class ImageModel(models.Model):
     uploaded_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     modules = models.TextField(blank=True)
-    debug = models.TextField(blank=True)
 
     def save(self, *args, **kwargs):
         super(ImageModel, self).save(*args, **kwargs)
@@ -50,7 +49,6 @@ class ResultModel(models.Model):
     # result = models.TextField(null=True)
     image = models.ForeignKey(ImageModel, related_name='results', on_delete=models.CASCADE)
     module = models.ForeignKey(ModuleModel)
-    debug = models.TextField(null=True)
 
     def save(self, *args, **kwargs):
         super(ResultModel, self).save(*args, **kwargs)
@@ -66,9 +64,12 @@ class ResultModel(models.Model):
 
     # Celery Get
     def get_result(self):
-        task_get = ast.literal_eval(self.task.get())
-        for result in task_get:
-            self.module_result.create(position=result[0], values=result[1])
+        try:
+            task_get = ast.literal_eval(self.task.get())
+            for result in task_get:
+                self.module_result.create(position=result[0], values=result[1])
+        except:
+            raise exceptions.ValidationError("Module Error. Please contact the administrator")
 
     def get_module_name(self):
         return self.module.name
@@ -78,7 +79,6 @@ class ResultDetailModel(models.Model):
     result_model = models.ForeignKey(ResultModel, related_name='module_result', on_delete=models.CASCADE)
     position = models.TextField()
     values = models.TextField()
-    debug = models.TextField(null=True)
 
     x = models.FloatField(null=True)
     y = models.FloatField(null=True)
@@ -88,6 +88,15 @@ class ResultDetailModel(models.Model):
     def save(self, *args, **kwargs):
         super(ResultDetailModel, self).save(*args, **kwargs)
         self.x, self.y, self.w, self.h = self.position
-        self.values = self.values.items()
-        # self.debug = type(self.values)
+        if isinstance(self.values, dict):
+            for item in self.values.items():
+                self.prediction.create(label=item[0], score=float(item[1]))
+        else:
+            raise exceptions.ValidationError("Module return value Error. Please contact the administrator")
         super(ResultDetailModel, self).save()
+
+
+class ResultDetailListModel(models.Model):
+    result_detail_model = models.ForeignKey(ResultDetailModel, related_name='prediction', on_delete=models.CASCADE)
+    label = models.TextField(null=True, unique=False)
+    score = models.FloatField(null=True, unique=False)
