@@ -17,6 +17,9 @@ class ModuleModel(models.Model):
     def __str__(self):
         return self.name
 
+    def __unicode__(self):
+        return self.name
+
     def save(self, *args, **kwargs):
         super(ModuleModel, self).save(*args, **kwargs)
         response = requests.get(self.url)

@@ -7,52 +7,50 @@ from django.db import models
 from rest_framework import exceptions
 from ModuleCommunicator import tasks
 from ModuleManager.models import *
-import json, ast
+from ModuleCommunicator.utils import filename
+import ast
 
 
 class ImageModel(models.Model):
-    image = models.ImageField()
+    image = models.ImageField(upload_to=filename.from_sha256)
     token = models.AutoField(primary_key=True)
     uploaded_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     modules = models.TextField(blank=True)
+    debug = models.TextField(blank=True)
 
     def save(self, *args, **kwargs):
         super(ImageModel, self).save(*args, **kwargs)
 
         module_group_list = self.modules.split(',')
-        module_set = ModuleModel.objects.get_queryset()
+        module_set = None
+        module_result = list()
 
         for module_group in module_group_list:
             try:
                 modules_in_group = ModuleGroupModel.objects.get(name=module_group.strip())
-                module_set.union(modules_in_group.modules.all())
             except:
                 raise exceptions.ValidationError('Module not found. Please check and send again.')
 
-        module_result = list()
+            if module_set is None:
+                module_set = modules_in_group.modules.all()
+            else:
+                module_set = module_set | modules_in_group.modules.all()
 
         for module in module_set.all():
             module_result.append(self.results.create(module=module))
 
-        for module in module_result:
-            module.get_result()
+        for result in module_result:
+            result.get_result()
 
         super(ImageModel, self).save()
 
 
 class ResultModel(models.Model):
-    result = models.TextField(null=True)
+    # result = models.TextField(null=True)
     image = models.ForeignKey(ImageModel, related_name='results', on_delete=models.CASCADE)
     module = models.ForeignKey(ModuleModel)
-    task = None
-
-    class Meta:
-        unique_together = ('module', 'image')
-        ordering = ['module']
-
-    def __unicode__(self):
-        return "{0} : {1}".format(self.module.name, self.result)
+    debug = models.TextField(null=True)
 
     def save(self, *args, **kwargs):
         super(ResultModel, self).save(*args, **kwargs)
@@ -64,14 +62,32 @@ class ResultModel(models.Model):
         try:
             self.task = tasks.post_image_and_get_result.delay(url=self.module.url, image_path=self.image.image.path)
         except:
-            self.task = None
+            raise exceptions.ValidationError("Module Error. Please contact the administrator")
 
     # Celery Get
     def get_result(self):
-        if self.task is not None:
-            task_get = self.task.get()
-            self.result = ast.literal_eval(task_get)
-        else:
-            self.result = u"Module Error. Please contact the administrator"
-        super(ResultModel, self).save()
+        task_get = ast.literal_eval(self.task.get())
+        for result in task_get:
+            self.module_result.create(position=result[0], values=result[1])
 
+    def get_module_name(self):
+        return self.module.name
+
+
+class ResultDetailModel(models.Model):
+    result_model = models.ForeignKey(ResultModel, related_name='module_result', on_delete=models.CASCADE)
+    position = models.TextField()
+    values = models.TextField()
+    debug = models.TextField(null=True)
+
+    x = models.FloatField(null=True)
+    y = models.FloatField(null=True)
+    w = models.FloatField(null=True)
+    h = models.FloatField(null=True)
+
+    def save(self, *args, **kwargs):
+        super(ResultDetailModel, self).save(*args, **kwargs)
+        self.x, self.y, self.w, self.h = self.position
+        self.values = self.values.items()
+        # self.debug = type(self.values)
+        super(ResultDetailModel, self).save()
