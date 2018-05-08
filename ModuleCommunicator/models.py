@@ -100,3 +100,6 @@ class ResultDetailListModel(models.Model):
     result_detail_model = models.ForeignKey(ResultDetailModel, related_name='prediction', on_delete=models.CASCADE)
     label = models.TextField(null=True, unique=False)
     score = models.FloatField(null=True, unique=False)
+
+    class Meta:
+        ordering = ['-score']
