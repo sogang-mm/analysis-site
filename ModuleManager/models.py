@@ -21,10 +21,13 @@ class ModuleModel(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        super(ModuleModel, self).save(*args, **kwargs)
-        response = requests.get(self.url)
-        if response.ok is False:
+        try:
+            response = requests.get(self.url)
+        except:
             raise exceptions.ValidationError('Cannot access URL. Check module URL.')
+        # if response.ok is False:
+        #     raise exceptions.ValidationError('Cannot access URL. Check module URL.')
+        super(ModuleModel, self).save(*args, **kwargs)
         self.modulegroupmodel_set.create(name=self.name, modules_list=self.name, description=self.description)
         super(ModuleModel, self).save()
 

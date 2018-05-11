@@ -57,6 +57,7 @@ class ResultModel(models.Model):
 
     # Celery Delay
     def set_task(self):
+        self.task = None
         try:
             self.task = tasks.post_image_and_get_result.delay(url=self.module.url, image_path=self.image.image.path)
         except:
@@ -86,13 +87,12 @@ class ResultDetailModel(models.Model):
     h = models.FloatField(null=True)
 
     def save(self, *args, **kwargs):
+        if not (isinstance(self.position, list) and isinstance(self.values, dict)):
+            raise exceptions.ValidationError("Module return value Error. Please contact the administrator")
         super(ResultDetailModel, self).save(*args, **kwargs)
         self.x, self.y, self.w, self.h = self.position
-        if isinstance(self.values, dict):
-            for item in self.values.items():
-                self.prediction.create(label=item[0], score=float(item[1]))
-        else:
-            raise exceptions.ValidationError("Module return value Error. Please contact the administrator")
+        for item in self.values.items():
+            self.prediction.create(label=item[0], score=float(item[1]))
         super(ResultDetailModel, self).save()
 
 
