@@ -21,9 +21,23 @@ class ImageModel(models.Model):
     def save(self, *args, **kwargs):
         super(ImageModel, self).save(*args, **kwargs)
 
+        module_set = self.get_module()
+        module_result = list()
+
+        for module in module_set.all():
+            module_result.append(self.results.create(module=module))
+
+        for result in module_result:
+            result.get_result()
+        super(ImageModel, self).save()
+
+    # Get ModuleModel item from self.modules
+    def get_module(self):
+        if len(self.modules) == 0:
+            return ModuleModel.objects.all()
+
         module_group_list = self.modules.split(',')
         module_set = None
-        module_result = list()
 
         for module_group in module_group_list:
             try:
@@ -36,13 +50,7 @@ class ImageModel(models.Model):
             else:
                 module_set = module_set | modules_in_group.modules.all()
 
-        for module in module_set.all():
-            module_result.append(self.results.create(module=module))
-
-        for result in module_result:
-            result.get_result()
-
-        super(ImageModel, self).save()
+        return module_set
 
 
 class ResultModel(models.Model):
