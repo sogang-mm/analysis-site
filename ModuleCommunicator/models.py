@@ -5,14 +5,14 @@ from django.db import models
 
 # Create your models here.
 from rest_framework import exceptions
-from ModuleCommunicator import tasks
-from ModuleManager.models import *
+from ModuleCommunicator.tasks import communicator
 from ModuleCommunicator.utils import filename
+from ModuleManager.models import *
 import ast
 
 
 class ImageModel(models.Model):
-    image = models.ImageField(upload_to=filename.from_sha256)
+    image = models.ImageField(upload_to=filename.uploaded_date)
     token = models.AutoField(primary_key=True)
     uploaded_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
@@ -54,7 +54,6 @@ class ImageModel(models.Model):
 
 
 class ResultModel(models.Model):
-    # result = models.TextField(null=True)
     image = models.ForeignKey(ImageModel, related_name='results', on_delete=models.CASCADE)
     module = models.ForeignKey(ModuleModel)
 
@@ -67,7 +66,7 @@ class ResultModel(models.Model):
     def set_task(self):
         self.task = None
         try:
-            self.task = tasks.post_image_and_get_result.delay(url=self.module.url, image_path=self.image.image.path)
+            self.task = communicator.delay(url=self.module.url, image_path=self.image.image.path)
         except:
             raise exceptions.ValidationError("Module Error. Please contact the administrator")
 

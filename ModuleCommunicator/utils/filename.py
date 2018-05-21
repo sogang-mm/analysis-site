@@ -1,14 +1,36 @@
 import os, hashlib, datetime
 
 
-def from_sha256(instance, filename):
-    contents = instance.image.read()
-    instance_hash_value = hashlib.sha256(bytes(contents)).hexdigest()
-    filename_extension = os.path.splitext(filename)[-1]
-    update_filename = "{0}{1}".format(instance_hash_value, filename_extension)
-    return update_filename
+_date_today = datetime.date.today().isoformat()
+_directory = str(filter(str.isdigit, _date_today))
 
 
-# def from_datetime(instance, filename):
-#     update_filename = ''
-#     return update_filename
+def default(instance, filename):
+    _path = os.path.join(_directory, filename)
+    return _path
+
+def md5sum(instance, filename):
+    _contents = instance.image.read()
+    _base = hashlib.md5(bytes(_contents)).hexdigest()
+    _ext = os.path.splitext(filename)[-1]
+    _filename = "{0}{1}".format(_base, _ext)
+    _path = os.path.join(_directory, _filename)
+    return _path
+
+
+def sha256(instance, filename):
+    _contents = instance.image.read()
+    _base = hashlib.sha256(bytes(_contents)).hexdigest()
+    _ext = os.path.splitext(filename)[-1]
+    _filename = "{0}{1}".format(_base, _ext)
+    _path = os.path.join(_directory, _filename)
+    return _path
+
+
+def uploaded_date(instance, filename):
+    _contents = datetime.datetime.now()
+    _base = _contents.strftime("%H%M%S%f")
+    _ext = os.path.splitext(filename)[-1]
+    _filename = "{0}{1}".format(_base, _ext)
+    _path = os.path.join(_directory, _filename)
+    return _path
