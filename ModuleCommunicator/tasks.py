@@ -6,7 +6,7 @@ import requests
 
 
 @app.task
-def post_image_and_get_result(url, image_path):
+def communicator(url, image_path):
     json_data = dict()
     json_image = open(image_path, 'rb')
     json_files = {'image': json_image}
