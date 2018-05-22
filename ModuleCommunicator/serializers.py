@@ -3,17 +3,25 @@ from rest_framework import serializers
 from ModuleCommunicator.models import *
 
 
-class ResultDetailListingField(serializers.RelatedField):
-    def to_representation(self, value):
-        return '{0}: {1}'.format(value.label, value.score)
+class ResultDetailPositionSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = ResultDetailPositionModel
+        fields = ('x', 'y', 'w', 'h')
+
+
+class ResultDetailLabelSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = ResultDetailLabelModel
+        fields = ('description', 'score')
 
 
 class ResultDetailSerializer(serializers.HyperlinkedModelSerializer):
-    prediction = ResultDetailListingField(many=True, read_only=True)
+    position = ResultDetailPositionSerializer(many=True, read_only=True)
+    label = ResultDetailLabelSerializer(many=True, read_only=True)
 
     class Meta:
         model = ResultDetailModel
-        fields = ('x', 'y', 'w', 'h', 'prediction')
+        fields = ('position', 'label')
 
 
 class ResultSerializer(serializers.HyperlinkedModelSerializer):
