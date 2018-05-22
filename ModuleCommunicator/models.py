@@ -75,7 +75,7 @@ class ResultModel(models.Model):
         try:
             task_get = ast.literal_eval(self.task.get())
             for result in task_get:
-                self.module_result.create(position=result[0], values=result[1])
+                self.module_result.create(values=result)
         except:
             raise exceptions.ValidationError("Module Error. Please contact the administrator")
 
@@ -85,27 +85,33 @@ class ResultModel(models.Model):
 
 class ResultDetailModel(models.Model):
     result_model = models.ForeignKey(ResultModel, related_name='module_result', on_delete=models.CASCADE)
-    position = models.TextField()
     values = models.TextField()
 
-    x = models.FloatField(null=True)
-    y = models.FloatField(null=True)
-    w = models.FloatField(null=True)
-    h = models.FloatField(null=True)
-
     def save(self, *args, **kwargs):
-        if not (isinstance(self.position, list) and isinstance(self.values, dict)):
+        if not (isinstance(self.values[0], list) and isinstance(self.values[1], dict)):
             raise exceptions.ValidationError("Module return value Error. Please contact the administrator")
         super(ResultDetailModel, self).save(*args, **kwargs)
-        self.x, self.y, self.w, self.h = self.position
-        for item in self.values.items():
-            self.prediction.create(label=item[0], score=float(item[1]))
+        x, y, w, h = self.values[0]
+        self.position.create(x=x, y=y, w=w, h=h)
+        for item in self.values[1].items():
+            self.label.create(description=item[0], score=float(item[1]))
         super(ResultDetailModel, self).save()
 
 
-class ResultDetailListModel(models.Model):
-    result_detail_model = models.ForeignKey(ResultDetailModel, related_name='prediction', on_delete=models.CASCADE)
-    label = models.TextField(null=True, unique=False)
+class ResultDetailPositionModel(models.Model):
+    result_detail_model = models.ForeignKey(ResultDetailModel, related_name='position', on_delete=models.CASCADE)
+    x = models.FloatField(null=True, unique=False)
+    y = models.FloatField(null=True, unique=False)
+    w = models.FloatField(null=True, unique=False)
+    h = models.FloatField(null=True, unique=False)
+
+    class Meta:
+        ordering = ['x', 'y', 'w', 'h']
+
+
+class ResultDetailLabelModel(models.Model):
+    result_detail_model = models.ForeignKey(ResultDetailModel, related_name='label', on_delete=models.CASCADE)
+    description = models.TextField(null=True, unique=False)
     score = models.FloatField(null=True, unique=False)
 
     class Meta:
