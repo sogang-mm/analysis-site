@@ -32,15 +32,7 @@ router.register(r'modules/group', ModuleManager.views.ModulesGroupViewSet)
 router.register(r'modules/detail', ModuleManager.views.ModulesViewSet)
 
 
-
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include(router.urls)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-
-# urlpatterns = [
-#     url(r'^admin/', admin.site.urls),
-#     url(r'^', include('ModuleCommunicator.urls')),
-#     url(r'^modules/', include('ModuleManager.urls')),
-# ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
