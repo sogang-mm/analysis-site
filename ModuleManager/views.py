@@ -8,13 +8,11 @@ from ModuleManager.serializers import *
 from rest_framework import viewsets
 
 
-# class ModulesViewSet(viewsets.ModelViewSet):
 class ModulesViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ModuleModel.objects.all()
     serializer_class = ModuleSerializer
 
 
-# class ModulesGroupViewSet(viewsets.ModelViewSet):
 class ModulesGroupViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ModuleGroupModel.objects.all()
     serializer_class = ModuleGroupSerializer

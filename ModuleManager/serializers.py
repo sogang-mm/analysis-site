@@ -6,10 +6,12 @@ from ModuleManager.models import *
 class ModuleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ModuleModel
-        fields = ('name', 'url', 'description', 'status')
+        fields = ('name', 'url', 'content', 'status')
 
 
 class ModuleGroupSerializer(serializers.HyperlinkedModelSerializer):
+    modules = ModuleSerializer(many=True)
+
     class Meta:
         model = ModuleGroupModel
-        fields = ('name', 'description', 'modules_list')
+        fields = ('name', 'content', 'modules')
