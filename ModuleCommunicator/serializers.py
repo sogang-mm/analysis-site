@@ -16,7 +16,7 @@ class ResultDetailLabelSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ResultDetailSerializer(serializers.HyperlinkedModelSerializer):
-    position = ResultDetailPositionSerializer(read_only=True)
+    position = ResultDetailPositionSerializer(many=True, read_only=True)
     label = ResultDetailLabelSerializer(many=True, read_only=True)
 
     class Meta:
