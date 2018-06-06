@@ -92,14 +92,14 @@ class ResultDetailModel(models.Model):
             raise exceptions.ValidationError("Module return value Error. Please contact the administrator")
         super(ResultDetailModel, self).save(*args, **kwargs)
         x, y, w, h = self.values[0]
-        self.position.create(x=x, y=y, w=w, h=h)
+        ResultDetailPositionModel.objects.create(result_detail_model=self, x=x, y=y, w=w, h=h)
         for item in self.values[1].items():
             self.label.create(description=item[0], score=float(item[1]))
         super(ResultDetailModel, self).save()
 
 
 class ResultDetailPositionModel(models.Model):
-    result_detail_model = models.ForeignKey(ResultDetailModel, related_name='position', on_delete=models.CASCADE)
+    result_detail_model = models.OneToOneField(ResultDetailModel, related_name='position', on_delete=models.CASCADE)
     x = models.FloatField(null=True, unique=False)
     y = models.FloatField(null=True, unique=False)
     w = models.FloatField(null=True, unique=False)
