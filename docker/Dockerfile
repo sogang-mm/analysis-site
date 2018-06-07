@@ -6,6 +6,8 @@ RUN apt-get update && apt-get install -y \
 		git \
 		wget \
 		python-pip \
+		postgresql \
+		postgresql-contrib \
 		erlang \
 		rabbitmq-server \
 		apt-utils && \
@@ -18,6 +20,7 @@ RUN pip install \
 	djangorestframework \
 	requests \
 	Pillow \
+	psycopg2-binary \
 	kombu==4.1.0 \
 	celery==4.1.0
 

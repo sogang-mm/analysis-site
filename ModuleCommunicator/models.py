@@ -4,11 +4,11 @@ from __future__ import unicode_literals
 from django.db import models
 
 # Create your models here.
+from django.contrib.postgres.fields import JSONField
 from rest_framework import exceptions
 from ModuleCommunicator.tasks import communicator
 from ModuleCommunicator.utils import filename
 from ModuleManager.models import *
-import ast
 
 
 class ImageModel(models.Model):
@@ -56,7 +56,7 @@ class ImageModel(models.Model):
 class ResultModel(models.Model):
     image = models.ForeignKey(ImageModel, related_name='results', on_delete=models.CASCADE)
     module = models.ForeignKey(ModuleModel)
-    module_result = models.TextField(null=True)
+    module_result = JSONField(null=True)
 
     def save(self, *args, **kwargs):
         super(ResultModel, self).save(*args, **kwargs)
@@ -69,17 +69,14 @@ class ResultModel(models.Model):
         try:
             self.task = communicator.delay(url=self.module.url, image_path=self.image.image.path)
         except:
-            raise exceptions.ValidationError("Module Error. Please contact the administrator")
+            raise exceptions.ValidationError("Module Set Error. Please contact the administrator")
 
     # Celery Get
     def get_result(self):
         try:
-            # task_get = ast.literal_eval(self.task.get())
-            # for result in task_get:
-            #     self.module_result.create(values=result)
-            self.module_result = str(self.task.get())
+            self.module_result = self.task.get()
         except:
-            raise exceptions.ValidationError("Module Error. Please contact the administrator")
+            raise exceptions.ValidationError("Module Get Error. Please contact the administrator")
         super(ResultModel, self).save()
 
     def get_module_name(self):

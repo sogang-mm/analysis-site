@@ -1,6 +1,7 @@
 django==1.11
 djangorestframework
 Pillow
+psycopg2-binary
 kombu==4.1.0
 celery==4.1.0
 requests
