@@ -17,4 +17,4 @@ def communicator(url, image_path):
 
     json_image.close()
 
-    return str(result)
+    return result
