@@ -22,22 +22,19 @@ class ModuleModel(models.Model):
 
     def save(self, *args, **kwargs):
         super(ModuleModel, self).save(*args, **kwargs)
-
         try:
             response = requests.get(self.url)
-            self.status = True
-            if response.ok is False:
-                self.status = False
+            self.status = response.ok
         except:
             raise exceptions.ValidationError('Cannot access URL. Check module URL.')
 
-        self.modulegroupmodel_set.create(name=self.name, content=self.content)
+        self.group.update_or_create(name=self.name, content=self.content)
         super(ModuleModel, self).save()
 
 
 class ModuleGroupModel(models.Model):
     name = models.TextField(unique=True)
-    modules = models.ManyToManyField(ModuleModel)
+    modules = models.ManyToManyField(ModuleModel, related_name='group')
     content = models.TextField(blank=True)
 
     def __str__(self):
@@ -45,20 +42,3 @@ class ModuleGroupModel(models.Model):
 
     def __unicode__(self):
         return self.name
-
-    # def save(self, *args, **kwargs):
-    #     modules_name_list = self.modules_list.split(',')
-    #
-    #     modules_list = list()
-    #     for module_name in modules_name_list:
-    #         modules = ModuleModel.objects.filter(name=module_name.strip())
-    #         if modules.count() == 0:
-    #             raise exceptions.ValidationError('Module not found. Check module name.')
-    #         modules_list.append(modules.first())
-    #
-    #     super(ModuleGroupModel, self).save(*args, **kwargs)
-    #
-    #     for modules in modules_list:
-    #         self.modules.add(modules)
-    #
-    #     super(ModuleGroupModel, self).save()
