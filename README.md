@@ -10,6 +10,7 @@
 
 ```bash
 sudo apt-get install postgresql postgresql-contrib
+sudo service postgresql restart
 ```
 
 실행하기 전, Celery에 필요한 message broker software인 RabbitMQ를 설치한다.
@@ -91,6 +92,12 @@ grant all privileges on database site_db to site_admin;
 
 
 ## 실행하기
+
+### Superuser 만들기
+Module 및 Module Group을 등록하기 위해서는 superuser이 필요하다.
+```bash
+python manage.py createsuperuser
+```
 
 ### Web Start
 전체 과정을 실행하는 것은 다음과 같이 입력한다.
