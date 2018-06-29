@@ -40,8 +40,8 @@ class ModulesGroupViewSet(viewsets.ReadOnlyModelViewSet):
 
         name = self.request.query_params.get('name', None)
         if name is not None:
-            groups = queryset.filter(name__contains=name)
+            group = queryset.filter(name__contains=name)
             detail = queryset.filter(modules__name__contains=name)
-            queryset = groups.union(detail)
+            queryset = (group | detail).distinct()
 
         return queryset
