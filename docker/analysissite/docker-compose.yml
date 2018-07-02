@@ -2,9 +2,9 @@ version: '3.3'
 
 services:
   django:
-    container_name: analysissite
+    container_name: web
     build:
-      context: .
+      context: ..
       dockerfile: Dockerfile
     image: analysis/site:latest
     restart: always
