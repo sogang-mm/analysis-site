@@ -1,6 +1,6 @@
 #!/bin/bash
 dockerize -wait tcp://postgres:5432 -timeout 20s
-sh migration.sh
+sh run_migration.sh
 python -c "import os
 os.environ['DJANGO_SETTINGS_MODULE'] = 'AnalysisSite.settings'
 import django
