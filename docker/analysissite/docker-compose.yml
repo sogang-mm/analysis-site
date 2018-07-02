@@ -1,8 +1,7 @@
 version: '3.3'
 
 services:
-  django:
-    container_name: web
+  site:
     build:
       context: ..
       dockerfile: Dockerfile
