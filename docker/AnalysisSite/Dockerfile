@@ -1,12 +1,9 @@
 FROM ubuntu:16.04
 
-RUN apt-get update && apt-get install -y \
-		--no-install-recommends \
-		git \
-		wget \
-		python-pip \
-		apt-utils && \
-	rm -rf /var/lib/apt/lists/*
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+	   git wget python-pip apt-utils \
+	&& rm -rf /var/lib/apt/lists/*
 
 ENV DOCKERIZE_VERSION v0.6.1
 RUN wget -q https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
