@@ -1,35 +1,27 @@
-# Input deelearning framework you use
 FROM ubuntu:16.04
 
-RUN apt-get update && apt-get install -y \
-		--no-install-recommends \
-		git \
-		wget \
-		python-pip \
-		postgresql \
-		postgresql-contrib \
-		erlang \
-		rabbitmq-server \
-		apt-utils && \
-	rm -rf /var/lib/apt/lists/*
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+	   git wget python-pip apt-utils \
+	&& rm -rf /var/lib/apt/lists/*
+
+ENV DOCKERIZE_VERSION v0.6.1
+RUN wget -q https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 RUN pip install --upgrade pip
 RUN pip install setuptools
-RUN pip install \
-	django==1.11 \
-	djangorestframework \
-	requests \
-	Pillow \
-	psycopg2-binary \
-	kombu==4.1.0 \
-	celery==4.1.0
 
-EXPOSE 8000
+WORKDIR /workspace
+RUN git clone https://github.com/sogang-mm/AnalysisSite.git
+WORKDIR /workspace/AnalysisSite
+RUN pip install -r requirements.txt
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-
 ENTRYPOINT ["/entrypoint.sh"]
 
-WORKDIR /workspace
 RUN chmod -R a+w /workspace
+
+EXPOSE 8000
