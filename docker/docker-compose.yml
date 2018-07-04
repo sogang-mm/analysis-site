@@ -1,0 +1,41 @@
+version: '2.3'
+
+services:
+  web:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: "${COMPOSE_PROJECT_NAME}"
+    container_name: "${WEB_CONTAINER_NAME}"
+    restart: always
+    links:
+      - postgres
+      - rabbitmq
+    depends_on:
+      - postgres
+      - rabbitmq
+    env_file:
+      - "./env_files/django.env"
+      - "./env_files/postgres.env"
+      - "./env_files/rabbitmq.env"
+    ports:
+      - "8000:8000"
+    stdin_open: true
+    tty: true
+
+  postgres:
+    image: postgres:latest
+    restart: always
+    env_file:
+      - "./env_files/postgres.env"
+    expose:
+      - "5432"
+
+  rabbitmq:
+    image: rabbitmq:latest
+    restart: always
+    env_file:
+      - "./env_files/rabbitmq.env"
+    expose:
+      - "5672"
+      - "15672"
