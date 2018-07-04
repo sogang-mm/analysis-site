@@ -19,7 +19,7 @@ services:
       - "./env_files/postgres.env"
       - "./env_files/rabbitmq.env"
     ports:
-      - "8000:8000"
+      - "${WEB_EXTERNAL_PORT}:8000"
     stdin_open: true
     tty: true
 
