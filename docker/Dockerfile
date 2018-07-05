@@ -14,8 +14,8 @@ RUN pip install --upgrade pip
 RUN pip install setuptools
 
 WORKDIR /workspace
-RUN git clone https://github.com/sogang-mm/AnalysisSite.git
-WORKDIR /workspace/AnalysisSite
+RUN git clone https://github.com/sogang-mm/Analysis-Site.git
+WORKDIR /workspace/Analysis-Site
 RUN pip install -r requirements.txt
 
 COPY entrypoint.sh /entrypoint.sh
