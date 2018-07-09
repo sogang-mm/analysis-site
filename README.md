@@ -1,6 +1,7 @@
 # Analysis Site
 
 - [Introduce](#introduce)
+- [Prerequisites](#prerequisites)
 - [Installation](#installation)
     - [From Source](#from-source)
     - [Docker Compose](#docker-compose)
@@ -15,13 +16,20 @@
 
 본 프로젝트는 Neural Network의 결과를 REST API로 서비스 하기 위한 웹 서버를 제공합니다.
 
-본 프로젝트는 [Analysis Module](https://github.com/sogang-mm/Analysis-Module)로 구성된 여러 Module을 한 번에 관리하기 위해 진행되었습니다.
+본 프로젝트는 [Analysis Module](https://github.com/sogang-mm/analysis-module)로 구성된 여러 Module을 한 번에 관리하기 위해 제작되었습니다.
 
-따라서 본 프로젝트를 사용하고자 한다면 먼저 [Analysis Module](https://github.com/sogang-mm/Analysis-Module)로 부터 Module에 따른 프로젝트를 진행하시기 바랍니다.
+따라서 본 프로젝트를 사용하고자 한다면 먼저 [Analysis Module](https://github.com/sogang-mm/analysis-module)로 부터 Module에 따른 프로젝트를 진행하시기 바랍니다.
 
 Python 코드로 구성되어 있으며, Django 및 Django REST framework를 사용하여 개발하였습니다.
 
 Linux 사용을 가정하여 코드를 작성하였으며, 만약 다른 환경에서의 설치를 진행하려면 문의하시기 바랍니다.
+
+
+## Prerequisites
+
+- Linux
+- Python 2.7, 3.4, 3.5, or 3.6
+- And so on
 
 
 ## Installation
@@ -60,7 +68,8 @@ Docker Compose를 사용하기 위해서는 다음을 필요로 한다.
     ```
     * 본인의 git repository로 주소를 수정한다. 
     ```dockerfile
-    RUN git clone https://github.com/sogang-mm/Analysis-Site.git
+    RUN git clone https://github.com/sogang-mm/analysis-site.git
+    WORKDIR /workspace/analysis-site
     ```
         
 2. .env
@@ -151,7 +160,7 @@ python manage.py createsuperuser
         sh run_django.sh
         ```
     
-    * Web Server는 실행되나 Analysis-Module로 구성한 Web Server로부터 결과가 나오지 않는다면 run_celery.sh를 실행한다.
+    * Web Server는 실행되나 analysis module로 구성한 Web Server로부터 결과가 나오지 않는다면 run_celery.sh를 실행한다.
         ```bash
         sh run_celery.sh
         ```
