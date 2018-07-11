@@ -27,7 +27,7 @@ Linux 사용을 가정하여 코드를 작성하였으며, 만약 다른 환경�
 
 ## Prerequisites
 
-- Linux
+- Linux Based OS
 - Python 2.7, 3.4, 3.5, or 3.6
 - And so on
 
@@ -59,21 +59,10 @@ Docker Compose를 사용하기 위해서는 다음을 필요로 한다.
 
 - [Docker](https://docs.docker.com/) & [Docker compose](https://docs.docker.com/compose/)
 
-이후, docker 디렉토리 내 파일에서 다음과 같은 부분을 수정한다.
+이후, 디렉토리 내에서 다음과 같은 부분을 수정한다.
 
-1. Dockerfile
-    * 본인이 사용할 Docker image로 수정한다.
-    ```dockerfile
-    FROM ubuntu:16.04
-    ```
-    * 본인의 git repository로 주소를 수정한다. 
-    ```dockerfile
-    RUN git clone https://github.com/sogang-mm/analysis-site.git
-    WORKDIR /workspace/analysis-site
-    ```
-        
-2. .env
-    * Docker로 여러 Module 을 올리고자 한다면 다음을 수정한다.
+1. .env
+    * Docker로 여러 Site를 올리고자 한다면 다음을 수정한다.
     ```text
     COMPOSE_PROJECT_NAME=analysis-site
     WEB_CONTAINER_NAME=site
@@ -83,7 +72,7 @@ Docker Compose를 사용하기 위해서는 다음을 필요로 한다.
     * WEB_CONTAINER_NAME은 Dockerfile에서 build한 image의 container의 이름으로 설정된다.
     * WEB_EXTERNAL_PORT는 웹 서버의 외부 통신을 위한 PORT로 설정된다.
     
-3. env_files/django.env
+2. docker/django.env
     * Django의 관리자 계정의 ID와 Password를 변경하려면 다음을 수정한다.
     ```text
     DJANGO_SUPERUSER_USERNAME=root
