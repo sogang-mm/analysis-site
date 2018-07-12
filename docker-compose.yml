@@ -15,9 +15,9 @@ services:
       - postgres
       - rabbitmq
     env_file:
-      - "./docker/django.env"
-      - "./docker/postgres.env"
-      - "./docker/rabbitmq.env"
+      - ".env.django"
+      - ".env.postgres"
+      - ".env.rabbitmq"
     ports:
       - "${WEB_EXTERNAL_PORT}:8000"
     stdin_open: true
@@ -27,7 +27,7 @@ services:
     image: postgres:latest
     restart: always
     env_file:
-      - "./docker/postgres.env"
+      - ".env.postgres"
     expose:
       - "5432"
 
@@ -35,7 +35,7 @@ services:
     image: rabbitmq:latest
     restart: always
     env_file:
-      - "./docker/rabbitmq.env"
+      - ".env.rabbitmq"
     expose:
       - "5672"
       - "15672"
