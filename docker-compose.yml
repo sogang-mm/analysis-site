@@ -18,10 +18,10 @@ services:
       - ".env.django"
       - ".env.postgres"
       - ".env.rabbitmq"
-    volumes:
-      - ./web-data:/workspace/media
     ports:
       - "${WEB_EXTERNAL_PORT}:8000"
+    volumes:
+      - ./web-data:/workspace/media
     stdin_open: true
     tty: true
 
