@@ -72,7 +72,7 @@ Docker Compose를 사용하기 위해서는 다음을 필요로 한다.
     * WEB_CONTAINER_NAME은 Dockerfile에서 build한 image의 container의 이름으로 설정된다.
     * WEB_EXTERNAL_PORT는 웹 서버의 외부 통신을 위한 PORT로 설정된다.
     
-2. docker/django.env
+2. .env.django
     * Django의 관리자 계정의 ID와 Password를 변경하려면 다음을 수정한다.
     ```text
     DJANGO_SUPERUSER_USERNAME=root
