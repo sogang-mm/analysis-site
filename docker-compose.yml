@@ -18,6 +18,8 @@ services:
       - ".env.django"
       - ".env.postgres"
       - ".env.rabbitmq"
+    volumes:
+      - ./web-data:/workspace/media
     ports:
       - "${WEB_EXTERNAL_PORT}:8000"
     stdin_open: true
@@ -30,6 +32,8 @@ services:
       - ".env.postgres"
     expose:
       - "5432"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
 
   rabbitmq:
     image: rabbitmq:latest
