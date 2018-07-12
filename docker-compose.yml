@@ -20,6 +20,8 @@ services:
       - ".env.rabbitmq"
     ports:
       - "${WEB_EXTERNAL_PORT}:8000"
+    volumes:
+      - ./web-data:/workspace/media
     stdin_open: true
     tty: true
 
@@ -30,6 +32,8 @@ services:
       - ".env.postgres"
     expose:
       - "5432"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
 
   rabbitmq:
     image: rabbitmq:latest
