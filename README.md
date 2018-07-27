@@ -61,18 +61,15 @@ Docker Compose를 사용하기 위해서는 다음을 필요로 한다.
 
 이후, 디렉토리 내에서 다음과 같은 부분을 수정한다.
 
-1. .env
-    * Docker로 여러 Site를 올리고자 한다면 다음을 수정한다.
-    ```text
-    COMPOSE_PROJECT_NAME=analysis-site
-    WEB_CONTAINER_NAME=site
-    WEB_EXTERNAL_PORT=8000
-    ```    
-    * COMPOSE_PROJECT_NAME은 Dockerfile에서 build한 image의 이름으로 설정된다.
-    * WEB_CONTAINER_NAME은 Dockerfile에서 build한 image의 container의 이름으로 설정된다.
-    * WEB_EXTERNAL_PORT는 웹 서버의 외부 통신을 위한 PORT로 설정된다.
+1. docker-compose.yml
+    * Site의 외부 통신을 위한 Port 수정이 필요하다면 다음을 수정한다.
+    ```docker
+    ports:
+      - "8000:8000"
+    ```
+    * 앞의 8000번을 원하는 포트로 수정한다. 예를 들어 8001번 포트로 접속하기 원한다면 "8001:8000"로 수정한다.
     
-2. .env.django
+2. docker-compose-env/main.env
     * Django의 관리자 계정의 ID와 Password를 변경하려면 다음을 수정한다.
     ```text
     DJANGO_SUPERUSER_USERNAME=root

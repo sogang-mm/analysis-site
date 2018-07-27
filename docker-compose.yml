@@ -1,12 +1,10 @@
 version: '2.3'
 
 services:
-  web:
+  main:
     build:
       context: ./
       dockerfile: Dockerfile
-    image: "${COMPOSE_PROJECT_NAME}"
-    container_name: "${WEB_CONTAINER_NAME}"
     restart: always
     links:
       - postgres
@@ -15,11 +13,13 @@ services:
       - postgres
       - rabbitmq
     env_file:
-      - ".env.django"
-      - ".env.postgres"
-      - ".env.rabbitmq"
+      - "docker-compose-env/main.env"
+      - "docker-compose-env/postgres.env"
+      - "docker-compose-env/rabbitmq.env"
+    expose:
+      - "8000"
     ports:
-      - "${WEB_EXTERNAL_PORT}:8000"
+      - "8000:8000"
     volumes:
       - ./web-data:/workspace/media
     stdin_open: true
@@ -29,7 +29,7 @@ services:
     image: postgres:latest
     restart: always
     env_file:
-      - ".env.postgres"
+      - "docker-compose-env/postgres.env"
     expose:
       - "5432"
     volumes:
@@ -39,7 +39,7 @@ services:
     image: rabbitmq:latest
     restart: always
     env_file:
-      - ".env.rabbitmq"
+      - "docker-compose-env/rabbitmq.env"
     expose:
       - "5672"
       - "15672"
