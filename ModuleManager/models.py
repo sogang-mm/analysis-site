@@ -34,7 +34,7 @@ class ModuleElementModel(models.Model):
 
 class ModuleGroupModel(models.Model):
     name = models.TextField(unique=True)
-    modules = models.ManyToManyField(ModuleElementModel, related_name='group')
+    elements = models.ManyToManyField(ModuleElementModel, related_name='group')
     content = models.TextField(blank=True)
 
     def __str__(self):
