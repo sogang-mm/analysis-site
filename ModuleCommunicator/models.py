@@ -46,9 +46,9 @@ class ImageModel(models.Model):
                 raise exceptions.ValidationError('Module not found. Please check and send again.')
 
             if module_set is None:
-                module_set = modules_in_group.modules.all()
+                module_set = modules_in_group.elements.all()
             else:
-                module_set = module_set | modules_in_group.modules.all()
+                module_set = module_set | modules_in_group.elements.all()
 
         return module_set
 
