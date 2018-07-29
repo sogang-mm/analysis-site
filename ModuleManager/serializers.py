@@ -3,14 +3,14 @@ from rest_framework import serializers
 from ModuleManager.models import *
 
 
-class ModuleSerializer(serializers.HyperlinkedModelSerializer):
+class ModuleElementSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = ModuleModel
+        model = ModuleElementModel
         fields = ('name', 'url', 'content', 'status')
 
 
 class ModuleGroupSerializer(serializers.HyperlinkedModelSerializer):
-    modules = ModuleSerializer(many=True)
+    modules = ModuleElementSerializer(many=True)
 
     class Meta:
         model = ModuleGroupModel

@@ -7,5 +7,5 @@ from django.contrib import admin
 from ModuleManager import models
 
 
-admin.site.register(models.ModuleModel)
+admin.site.register(models.ModuleElementModel)
 admin.site.register(models.ModuleGroupModel)

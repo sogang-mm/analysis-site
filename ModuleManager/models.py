@@ -8,7 +8,7 @@ from rest_framework import exceptions
 import requests
 
 
-class ModuleModel(models.Model):
+class ModuleElementModel(models.Model):
     name = models.TextField(unique=True)
     url = models.URLField()
     content = models.TextField(blank=True)
@@ -21,7 +21,7 @@ class ModuleModel(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        super(ModuleModel, self).save(*args, **kwargs)
+        super(ModuleElementModel, self).save(*args, **kwargs)
         try:
             response = requests.get(self.url)
             self.status = response.ok
@@ -29,12 +29,12 @@ class ModuleModel(models.Model):
             raise exceptions.ValidationError('Cannot access URL. Check module URL.')
 
         self.group.update_or_create(name=self.name, content=self.content)
-        super(ModuleModel, self).save()
+        super(ModuleElementModel, self).save()
 
 
 class ModuleGroupModel(models.Model):
     name = models.TextField(unique=True)
-    modules = models.ManyToManyField(ModuleModel, related_name='group')
+    modules = models.ManyToManyField(ModuleElementModel, related_name='group')
     content = models.TextField(blank=True)
 
     def __str__(self):
