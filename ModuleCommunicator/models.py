@@ -34,7 +34,7 @@ class ImageModel(models.Model):
     # Get ModuleModel item from self.modules
     def get_module(self):
         if len(self.modules) == 0:
-            return ModuleModel.objects.all()
+            return ModuleElementModel.objects.all()
 
         module_group_list = self.modules.split(',')
         module_set = None
@@ -55,7 +55,7 @@ class ImageModel(models.Model):
 
 class ResultModel(models.Model):
     image = models.ForeignKey(ImageModel, related_name='results', on_delete=models.CASCADE)
-    module = models.ForeignKey(ModuleModel)
+    module = models.ForeignKey(ModuleElementModel)
     module_result = JSONField(null=True)
 
     def save(self, *args, **kwargs):

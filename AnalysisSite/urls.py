@@ -28,8 +28,8 @@ import ModuleManager.views
 router = DefaultRouter()
 
 router.register(r'analyzer', ModuleCommunicator.views.ImageViewSet)
-router.register(r'modules/group', ModuleManager.views.ModulesGroupViewSet)
-router.register(r'modules/detail', ModuleManager.views.ModulesViewSet)
+router.register(r'module/group', ModuleManager.views.ModuleGroupViewSet)
+router.register(r'module/element', ModuleManager.views.ModuleElementViewSet)
 
 
 urlpatterns = [
