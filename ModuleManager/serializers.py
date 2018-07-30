@@ -10,8 +10,8 @@ class ModuleElementSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ModuleGroupSerializer(serializers.HyperlinkedModelSerializer):
-    modules = ModuleElementSerializer(many=True)
+    elements = ModuleElementSerializer(many=True)
 
     class Meta:
         model = ModuleGroupModel
-        fields = ('name', 'content', 'modules')
+        fields = ('name', 'content', 'elements')
