@@ -50,7 +50,7 @@ class ImageModel(models.Model):
             else:
                 module_set = module_set | modules_in_group.elements.all()
 
-        return module_set
+        return module_set.distinct()
 
 
 class ResultModel(models.Model):
