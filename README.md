@@ -39,7 +39,7 @@ Linux 사용을 가정하여 코드를 작성하였으며, 만약 다른 환경�
 실행에 필요한 service를 설치한다.
 ```bash
 sudo apt-get install postgresql postgresql-contrib rabbitmq-server
-sudo service postgresql rabbitmq-server restart
+sudo service postgresql start && sudo service rabbitmq-server start
 ```
 
 실행에 필요한 package를 설치한다.
@@ -72,7 +72,7 @@ Docker Compose를 사용하기 위해서는 다음을 필요로 한다.
 2. docker-compose-env/main.env
     * Django의 관리자 계정의 ID와 Password를 변경하려면 다음을 수정한다.
     ```text
-    DJANGO_SUPERUSER_USERNAME=root
+    DJANGO_SUPERUSER_USERNAME=admin
     DJANGO_SUPERUSER_EMAIL=none@none.com
     DJANGO_SUPERUSER_PASSWORD=password
     ```
@@ -99,7 +99,7 @@ psql
 
 Django에서 사용할 Database 및 계정을 만들어준다.
 ```postgresql
-CREATE USER site_admin WITH PASSWORD 'site_admin';
+CREATE USER site_admin WITH PASSWORD 'site_password';
 CREATE DATABASE site_db;
 grant all privileges on database site_db to site_admin;
 ALTER ROLE site_admin SET client_encoding TO 'utf-8';
