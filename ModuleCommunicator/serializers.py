@@ -9,6 +9,7 @@ class ResultSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ResultModel
         fields = ('module_name', 'module_result')
+        read_only_fields = ('module_name', 'module_result')
 
 
 class ImageSerializer(serializers.HyperlinkedModelSerializer):
@@ -18,4 +19,3 @@ class ImageSerializer(serializers.HyperlinkedModelSerializer):
         model = ImageModel
         fields = ('image', 'modules', 'token', 'uploaded_date', 'updated_date', 'results')
         read_only_fields = ('token', 'uploaded_date', 'updated_date', 'results')
-
