@@ -6,6 +6,7 @@ from django.db import models
 # Create your models here.
 from django.contrib.postgres.fields import JSONField
 from rest_framework import exceptions
+from AnalysisSite.config import DEBUG
 from ModuleCommunicator.tasks import communicator
 from ModuleCommunicator.utils import filename
 from ModuleManager.models import *
@@ -67,14 +68,20 @@ class ResultModel(models.Model):
     def set_task(self):
         self.task = None
         try:
-            self.task = communicator.delay(url=self.module.url, image_path=self.image.image.path)
+            if DEBUG:
+                self.task = communicator(url=self.module.url, image_path=self.image.image.path)
+            else:
+                self.task = communicator.delay(url=self.module.url, image_path=self.image.image.path)
         except:
             raise exceptions.ValidationError("Module Set Error. Please contact the administrator")
 
     # Celery Get
     def get_result(self):
         try:
-            self.module_result = self.task.get()
+            if DEBUG:
+                self.module_result = self.task
+            else:
+                self.module_result = self.task.get()
         except:
             raise exceptions.ValidationError("Module Get Error. Please contact the administrator")
         super(ResultModel, self).save()

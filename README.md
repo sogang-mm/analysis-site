@@ -87,6 +87,16 @@ http://localhost:8000/ 또는 구성한 서버의 IP 및 Domain으로 접근하�
 Docker-compse 사용 시 아래 부분을 넘기고 [Registration Module and Group](#registration-module-and-group)부터 진행한다. 
 
 
+### Additional Settings
+
+실행 시에 필요한 다양한 Setting을 변경하고 싶다면 AnalysisSite 디렉토리의 config.py를 수정한다.
+
+* 개발모드 해제하기
+```python
+DEBUG = False
+```
+
+
 ## Setting Database
 
 ### Make Database
