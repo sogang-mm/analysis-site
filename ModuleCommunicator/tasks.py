@@ -15,6 +15,8 @@ def communicator(url, image_path):
     result_data = json.loads(result_response.content)
     result = result_data['result']
 
+    model_execute_time = result_data['model_execute_time']
+    db_save_time = result_data['db_save_time']
     json_image.close()
 
-    return result
+    return result, model_execute_time, db_save_time
