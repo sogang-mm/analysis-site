@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 from AnalysisSite.celerys import app
+from AnalysisSite.config import PROFILE
 import json
 import requests
 
@@ -15,8 +16,9 @@ def communicator(url, image_path):
     result_data = json.loads(result_response.content)
     result = result_data['result']
 
-    model_execute_time = result_data['model_execute_time']
-    db_save_time = result_data['db_save_time']
     json_image.close()
 
-    return result, model_execute_time, db_save_time
+    if PROFILE :
+        return result, result_data['model_inference_time'], result_data['result_save_time']
+    else :
+        return result

@@ -107,12 +107,9 @@ class ResultModel(models.Model):
 
     # Celery Delay
     def set_task(self):
-        self.task = None
-        self.model_execute_time = None
-        self.db_save_time = None
         try:
             if PROFILE:
-                self.task, self.model_execute_time, self.db_save_time = communicator(url=self.module.url, image_path=self.image.image.path)
+                self.task, self.model_inference_time, self.result_save_time = communicator(url=self.module.url, image_path=self.image.image.path)
             elif DEBUG:
                 self.task = communicator(url=self.module.url, image_path=self.image.image.path)
             else:
@@ -130,8 +127,8 @@ class ResultModel(models.Model):
         except:
             raise exceptions.ValidationError("Module Get Error. Please contact the administrator")
         super(ResultModel, self).save()
-        if DEBUG :
-            return {"model_execute_time": self.model_execute_time, 'db_save_time' : self.db_save_time}
+        if PROFILE :
+            return {"model_inference_time": self.model_inference_time, 'result_save_time' : self.result_save_time}
 
     def get_module_name(self):
         return self.module.name
