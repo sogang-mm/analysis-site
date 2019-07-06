@@ -7,9 +7,12 @@ from django.db import models
 from django.contrib.postgres.fields import JSONField
 from rest_framework import exceptions
 from AnalysisSite.config import DEBUG
+from AnalysisSite.config import PROFILE
 from ModuleCommunicator.tasks import communicator
 from ModuleCommunicator.utils import filename
 from ModuleManager.models import *
+
+from Profile.timer import *
 
 
 class ImageModel(models.Model):
@@ -18,18 +21,37 @@ class ImageModel(models.Model):
     uploaded_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     modules = models.TextField(blank=True)
+    profile = JSONField(null=True)
 
     def save(self, *args, **kwargs):
         super(ImageModel, self).save(*args, **kwargs)
 
-        module_set = self.get_module()
-        module_result = list()
+        if PROFILE :
+            self.profile = {'analysis-site': None, 'analysis-module': None, 'total_time': None}
+            total_start = start_time()
+            module_set, module_result = self.init_module()
 
-        for module in module_set.all():
-            module_result.append(self.results.create(module=module))
+            start = start_time()
+            self.create_task(module_set, module_result)
+            create_task_time = end_time(start)
 
-        for result in module_result:
-            result.get_result()
+            start = start_time()
+            self.get_results(module_result)
+            get_result_time = end_time(start)
+            
+            self.profile['analysis-site'] = {
+                "create_task_time": create_task_time,
+                "get_result_time": get_result_time
+            }
+            total_end = end_time(total_start)
+            self.profile['total_time'] = total_end
+
+        else :
+            module_set, module_result = self.init_module()
+            self.create_task(module_set, module_result)
+
+            self.get_results(module_result)
+
         super(ImageModel, self).save()
 
     # Get ModuleModel item from self.modules
@@ -53,6 +75,25 @@ class ImageModel(models.Model):
 
         return module_set.distinct()
 
+    def init_module(self):
+        return self.get_module(), list()
+
+    def create_task(self, module_set, module_result):
+        for module in module_set.all():
+            module_result.append(self.results.create(module=module))
+
+    def get_results(self, module_result):
+        if PROFILE :
+            self.profile['analysis-module'] = []
+            for result in module_result:
+                module_result = {
+                    'module_name' : result.module.name,
+                    'module_result' : result.get_result()
+                }
+                self.profile['analysis-module'].append(module_result)
+        else :
+            for result in module_result:
+                result.get_result()
 
 class ResultModel(models.Model):
     image = models.ForeignKey(ImageModel, related_name='results', on_delete=models.CASCADE)
@@ -67,8 +108,12 @@ class ResultModel(models.Model):
     # Celery Delay
     def set_task(self):
         self.task = None
+        self.model_execute_time = None
+        self.db_save_time = None
         try:
-            if DEBUG:
+            if PROFILE:
+                self.task, self.model_execute_time, self.db_save_time = communicator(url=self.module.url, image_path=self.image.image.path)
+            elif DEBUG:
                 self.task = communicator(url=self.module.url, image_path=self.image.image.path)
             else:
                 self.task = communicator.delay(url=self.module.url, image_path=self.image.image.path)
@@ -85,6 +130,8 @@ class ResultModel(models.Model):
         except:
             raise exceptions.ValidationError("Module Get Error. Please contact the administrator")
         super(ResultModel, self).save()
+        if DEBUG :
+            return {"model_execute_time": self.model_execute_time, 'db_save_time' : self.db_save_time}
 
     def get_module_name(self):
         return self.module.name
