@@ -6,8 +6,7 @@ from django.db import models
 # Create your models here.
 from django.contrib.postgres.fields import JSONField
 from rest_framework import exceptions
-from AnalysisSite.config import DEBUG
-from AnalysisSite.config import PROFILE
+from AnalysisSite.config import DEBUG, PROFILE, MODE
 from ModuleCommunicator.tasks import communicator
 from ModuleCommunicator.utils import filename
 from ModuleManager.models import *
@@ -29,7 +28,10 @@ class ImageModel(models.Model):
         if PROFILE :
             self.profile = {'analysis-site': None, 'analysis-module': None, 'total_time': None}
             total_start = start_time()
+
+            start = start_time()
             module_set, module_result = self.init_module()
+            init_time = end_time(start)
 
             start = start_time()
             self.create_task(module_set, module_result)
@@ -40,11 +42,12 @@ class ImageModel(models.Model):
             get_result_time = end_time(start)
             
             self.profile['analysis-site'] = {
+                "initialize_time" : init_time,
                 "create_task_time": create_task_time,
                 "get_result_time": get_result_time
             }
-            total_end = end_time(total_start)
-            self.profile['total_time'] = total_end
+
+            self.profile['total_time'] = end_time(total_start)
 
         else :
             module_set, module_result = self.init_module()
@@ -101,9 +104,9 @@ class ResultModel(models.Model):
     module_result = JSONField(null=True)
 
     def save(self, *args, **kwargs):
-        super(ResultModel, self).save(*args, **kwargs)
+        # super(ResultModel, self).save(*args, **kwargs)
         self.set_task()
-        super(ResultModel, self).save()
+        # super(ResultModel, self).save()
 
     # Celery Delay
     def set_task(self):
@@ -126,7 +129,8 @@ class ResultModel(models.Model):
                 self.module_result = self.task.get()
         except:
             raise exceptions.ValidationError("Module Get Error. Please contact the administrator")
-        super(ResultModel, self).save()
+        if MODE == "VTT" :
+            super(ResultModel, self).save()
         if PROFILE :
             return {"model_inference_time": self.model_inference_time, 'result_save_time' : self.result_save_time}
 
