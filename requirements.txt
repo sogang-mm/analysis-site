@@ -3,5 +3,5 @@ djangorestframework
 Pillow
 psycopg2-binary
 kombu==4.2.1
-celery==4.2.1
+celery==5.2.2
 requests
